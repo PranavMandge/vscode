@@ -1,0 +1,52 @@
+import numpy as np
+from scipy.integrate import solve_ivp
+import matplotlib.pyplot as plt
+
+# Define the Lorentz system
+def lorentz(t, state, sigma, rho, beta):
+    x, y, z = state
+    dxdt = sigma * (y - x)
+    dydt = x * (rho - z) - y
+    dzdt = x * y - beta * z
+    return [dxdt, dydt, dzdt]
+
+# Parameters for the Lorentz system
+sigma = 10.0
+rho = 28.0
+beta = 8.0 / 3.0
+
+# Initial state
+initial_state = [1.0, 1.0, 1.0]
+
+# Time span
+t_span = (0.0, 50.0)
+t_eval = np.linspace(t_span[0], t_span[1], 10000)
+
+# Solve the Lorentz system
+solution = solve_ivp(lorentz, t_span, initial_state, args=(sigma, rho, beta), t_eval=t_eval)
+
+# Extract the solution
+x, y, z = solution.y
+
+# Plotting the solution
+fig = plt.figure(figsize=(12, 6))
+
+# 3D plot
+ax = fig.add_subplot(121, projection='3d')
+ax.plot(x, y, z, lw=0.5)
+ax.set_title('Lorentz Attractor')
+ax.set_xlabel('X axis')
+ax.set_ylabel('Y axis')
+ax.set_zlabel('Z axis')
+
+# 2D plots
+ax2 = fig.add_subplot(122)
+ax2.plot(t_eval, x, label='X')
+ax2.plot(t_eval, y, label='Y')
+ax2.plot(t_eval, z, label='Z')
+ax2.set_title('Lorentz System Over Time')
+ax2.set_xlabel('Time')
+ax2.set_ylabel('Values')
+ax2.legend()
+
+plt.show()
